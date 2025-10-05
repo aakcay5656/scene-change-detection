@@ -1,3 +1,4 @@
+TR
 # Sahne Değişikliği Tespit Sistemi
 
 ## Proje Hakkında
@@ -397,7 +398,7 @@ Sorularınız için:
 - Açık kaynak kütüphane geliştiricilerine
 
 -----------------------------------------------------------------------
-
+EN
 # Scene Change Detection System
 
 ## About the Project
