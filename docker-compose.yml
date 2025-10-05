@@ -1,0 +1,51 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # Eğitim servisi[web:155]
+  training:
+    build: .
+    container_name: scene-change-training
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./checkpoints:/app/checkpoints
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: python src/train.py --batch_size 16 --num_epochs 100
+
+  # İnferans servisi
+  inference:
+    build: .
+    container_name: scene-change-inference
+    volumes:
+      - ./data:/app/data
+      - ./checkpoints:/app/checkpoints
+      - ./results:/app/results
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: python src/inference.py --checkpoint checkpoints/best_model.pth --mode batch --test_dir data/processed/test
+
+  # TensorBoard
+  tensorboard:
+    image: tensorflow/tensorflow:latest
+    container_name: scene-change-tensorboard
+    command: tensorboard --logdir=/logs --host=0.0.0.0
+    ports:
+      - "6006:6006"
+    volumes:
+      - ./logs:/logs

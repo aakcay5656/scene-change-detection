@@ -1,0 +1,242 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+.virtualenv
+
+# PyTorch & ML
+checkpoints/
+*.pth
+*.pt
+*.ckpt
+*.pkl
+*.h5
+*.onnx
+
+# TensorBoard
+logs/
+runs/
+tensorboard/
+events.out.tfevents.*
+
+data/raw/
+data/processed/
+data/*.zip
+data/*.tar.gz
+*.csv
+*.h5
+*.hdf5
+
+
+# Results & Outputs
+outputs/
+predictions/
+*.png
+*.jpg
+*.jpeg
+*.mp4
+*.avi
+*.mov
+
+
+
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+notebooks/.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Spyder
+.spyderproject
+.spyproject
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+*.bak
+*.swp
+*.tmp
+
+# Secrets & Config
+.env
+.env.local
+*.key
+*.pem
+config.local.yml
+secrets.yml
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*_temp.*
+*_tmp.*
+
+# Large files
+*.tar
+*.gz
+*.zip
+*.rar
+*.7z
+
+# Documentation builds
+docs/_build/
+docs/.doctrees/
+site/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff (eğer kullanıyorsanız):
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff (eğer kullanıyorsanız):
+instance/
+.webassets-cache
+
+# Scrapy stuff (eğer kullanıyorsanız):
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmyp.json
+
+# Pyre type checker
+.pyre/
+
+# Weights & Biases
+wandb/
+
+# MLflow
+mlruns/
+
+# DVC
+.dvc/
+*.dvc
+
+/data/processed/test/
+
+/test_video.py
+/test_gpu.py
+/data/splits/
+/src/models/unet_parts.py
