@@ -1,7 +1,5 @@
 # Sahne Değişikliği Tespit Sistemi
 
-TURK AI YAPAY ZEKA BILISIM VE YAZILIM SISTEMLERI A.S. için geliştirilmiş derin öğrenme tabanlı sahne değişikliği tespit (Scene Change Detection) sistemi.
-
 ## Proje Hakkında
 
 Bu proje, iki görüntü arasındaki değişiklikleri otomatik olarak tespit eden ve sınıflandıran bir derin öğrenme modelidir. Siamese U-Net mimarisi kullanılarak geliştirilmiştir ve PyTorch framework'ü ile implement edilmiştir.
@@ -49,7 +47,7 @@ pytest==7.4.3
 
 ```
 # Repository'yi klonlayın
-git clone https://github.com/your-username/scene-change-detection.git
+git clone https://github.com/aakcay5656/scene-change-detection.git
 cd scene-change-detection
 
 # Virtual environment oluşturun
@@ -366,14 +364,14 @@ tensorboard --logdir=logs --port=6007
 
 ## Lisans
 
-Bu proje TURK AI YAPAY ZEKA BILISIM VE YAZILIM SISTEMLERI A.S. için geliştirilmiştir.
+Bu proje MIT Lisansı ile lisanslanmıştır.
 
 ## İletişim
 
 Sorularınız için:
 
-- Email: your.email@example.com
-- GitHub Issues: https://github.com/your-username/scene-change-detection/issues
+- Email: aakcay5656@gmail.com
+- GitHub Issues: https://github.com/aakcay5656/scene-change-detection/issues
 
 ## Referanslar
 
@@ -395,8 +393,5 @@ Sorularınız için:
 
 ## Teşekkürler
 
-- TURK AI ekibine proje desteği için
 - PyTorch topluluğuna
 - Açık kaynak kütüphane geliştiricilerine
-
-

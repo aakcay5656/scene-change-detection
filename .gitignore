@@ -240,3 +240,4 @@ mlruns/
 /test_gpu.py
 /data/splits/
 /src/models/unet_parts.py
+/results/batch/

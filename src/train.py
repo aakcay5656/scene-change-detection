@@ -1,5 +1,3 @@
-# src/train.py
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -134,7 +132,7 @@ def main():
 
     # Argümanlar
     parser = argparse.ArgumentParser(description='Scene Change Detection Training')
-    parser.add_argument('--data_dir', type=str, default='data/processed',
+    parser.add_argument('--data_dir', type=str, default=Config.DATA_DIR,
                         help='Veri klasörü yolu')
     parser.add_argument('--batch_size', type=int, default=Config.BATCH_SIZE,
                         help='Batch size')

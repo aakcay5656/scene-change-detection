@@ -1,5 +1,3 @@
-# src/data/transforms.py
-
 import torch
 import torchvision.transforms as T
 import torchvision.transforms.functional as TF
@@ -212,7 +210,7 @@ class MinimalTransform:
         img_a = TF.normalize(img_a, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         img_b = TF.normalize(img_b, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
-        # Mask float ve [0, 1] aralığı[web:80][web:82]
+        # Mask float ve [0, 1] aralığı
         mask = mask.float()
         if mask.max() > 1.0:
             mask = mask / 255.0

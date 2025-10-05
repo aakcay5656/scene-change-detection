@@ -59,7 +59,7 @@ class ChangeDetector:
     def predict(self, img_a: Image.Image, img_b: Image.Image,
                 threshold: float = 0.5) -> Tuple[np.ndarray, np.ndarray]:
         """
-        İki görüntü arasındaki değişiklikleri tespit et[web:130][web:134]
+        İki görüntü arasındaki değişiklikleri tespit et
 
         Args:
             img_a: İlk görüntü (referans)
@@ -197,7 +197,6 @@ class ChangeDetector:
         }
 
 
-# src/inference.py - PIL ile resize
 
 def test_single_pair(detector: ChangeDetector, img_a_path: str, img_b_path: str,
                      output_dir: str = 'results', label_path: str = None):
@@ -262,7 +261,7 @@ def test_single_pair(detector: ChangeDetector, img_a_path: str, img_b_path: str,
 
 def test_batch(detector: ChangeDetector, test_dir: str, output_dir: str = 'results'):
     """
-    Batch test[web:130]
+    Batch test
 
     Args:
         detector: ChangeDetector instance
@@ -270,60 +269,115 @@ def test_batch(detector: ChangeDetector, test_dir: str, output_dir: str = 'resul
         output_dir: Çıktı klasörü
     """
     from utils.metrics import MetricTracker
+    from tqdm import tqdm
 
     test_path = Path(test_dir)
     img_a_dir = test_path / 'A'
     img_b_dir = test_path / 'B'
     label_dir = test_path / 'label'
 
+    # Tüm görüntüleri listele
     img_pairs = sorted(img_a_dir.glob('*.png'))
 
+    if not img_pairs:
+        print(f"No images found in {img_a_dir}")
+        return None
+
     print(f"\nBatch testing {len(img_pairs)} image pairs...")
+    print(f"Output directory: {output_dir}")
+
+    # Output klasörünü oluştur
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
 
     metric_tracker = MetricTracker()
+    processed_count = 0
+    error_count = 0
 
-    for img_path in img_pairs:
+    # Progress bar
+    pbar = tqdm(img_pairs, desc="Processing")
+
+    for img_path in pbar:
         img_name = img_path.name
         img_a_path = img_a_dir / img_name
         img_b_path = img_b_dir / img_name
         label_path = label_dir / img_name
 
-        # Görüntüleri yükle
-        img_a = Image.open(img_a_path).convert('RGB')
-        img_b = Image.open(img_b_path).convert('RGB')
+        try:
+            # Görüntüleri yükle
+            img_a = Image.open(img_a_path).convert('RGB')
+            img_b = Image.open(img_b_path).convert('RGB')
 
-        # Inference
-        change_map, change_binary = detector.predict(img_a, img_b)
+            # Inference
+            change_map, change_binary = detector.predict(img_a, img_b)
 
-        # Metrik hesapla (label varsa)
-        if label_path.exists():
-            label = np.array(Image.open(label_path).convert('L'))
-            if label.max() > 1:
-                label = label / 255.0
+            # Metrik hesapla (label varsa)
+            if label_path.exists():
+                label = np.array(Image.open(label_path).convert('L'))
+                if label.max() > 1:
+                    label = label / 255.0
 
-            metric_tracker.update(
-                torch.from_numpy(change_binary).unsqueeze(0),
-                torch.from_numpy(label).unsqueeze(0)
-            )
+                # Boyut uyumu kontrolü ve düzeltme
+                if change_binary.shape != label.shape:
+                    label = cv2.resize(
+                        label,
+                        (change_binary.shape[1], change_binary.shape[0]),
+                        interpolation=cv2.INTER_NEAREST
+                    )
 
-        # Görselleştir
-        output_path = Path(output_dir) / f"{img_path.stem}_result.png"
-        detector.visualize(img_a, img_b, change_map, change_binary,
-                           save_path=str(output_path), show=False)
+                # Metrikleri güncelle
+                metric_tracker.update(
+                    torch.from_numpy(change_binary).unsqueeze(0).float(),
+                    torch.from_numpy(label).unsqueeze(0).float()
+                )
 
-    # Ortalama metrikler
-    metrics = metric_tracker.compute()
-    print(f"\nBatch Test Results:")
-    print(f"  F1 Score:  {metrics['f1']:.4f}")
-    print(f"  IoU:       {metrics['iou']:.4f}")
-    print(f"  Precision: {metrics['precision']:.4f}")
-    print(f"  Recall:    {metrics['recall']:.4f}")
-    print(f"  Accuracy:  {metrics['accuracy']:.4f}")
+            # Görselleştir ve kaydet
+            output_path = Path(output_dir) / f"{img_path.stem}_result.png"
+            detector.visualize(img_a, img_b, change_map, change_binary,
+                               save_path=str(output_path), show=False)
 
-    return metrics
+            processed_count += 1
+            pbar.set_postfix({'processed': processed_count, 'errors': error_count})
+
+        except Exception as e:
+            error_count += 1
+            pbar.set_postfix({'processed': processed_count, 'errors': error_count})
+            print(f"\nError processing {img_name}: {str(e)}")
+            continue
+
+    pbar.close()
+
+    # Sonuçları yazdır
+    print("\n" + "=" * 70)
+    print("BATCH TEST RESULTS")
+    print("=" * 70)
+    print(f"Total images:     {len(img_pairs)}")
+    print(f"Processed:        {processed_count}")
+    print(f"Errors:           {error_count}")
+    print(f"Success rate:     {processed_count / len(img_pairs) * 100:.2f}%")
+
+    if processed_count > 0:
+        # Ortalama metrikler
+        metrics = metric_tracker.compute()
+        print("\nPerformance Metrics:")
+        print("-" * 70)
+        print(f"  F1 Score:       {metrics['f1']:.4f}")
+        print(f"  IoU:            {metrics['iou']:.4f}")
+        print(f"  Precision:      {metrics['precision']:.4f}")
+        print(f"  Recall:         {metrics['recall']:.4f}")
+        print(f"  Accuracy:       {metrics['accuracy']:.4f}")
+        print(f"  Specificity:    {metrics['specificity']:.4f}")
+        print(f"  Kappa:          {metrics['kappa']:.4f}")
+        print(f"  Dice:           {metrics['dice']:.4f}")
+        print("-" * 70)
+        print(f"\nResults saved to: {output_dir}/")
+        print("=" * 70)
+
+        return metrics
+    else:
+        print("\nNo images were successfully processed.")
+        return None
 
 
-# src/inference.py - test_video fonksiyonunu güncelleyin
 
 def test_video(detector: ChangeDetector, video_path: str,
                output_path: str = 'output_video.mp4', fps: int = 30):
@@ -345,7 +399,7 @@ def test_video(detector: ChangeDetector, video_path: str,
     # Video aç
     cap = cv2.VideoCapture(video_path)
 
-    # Açıldı mı kontrol et[web:191][web:193]
+    # Açıldı mı kontrol et
     if not cap.isOpened():
         print(f"\n✗ ERROR: Cannot open video file!")
         print(f"  Possible reasons:")
@@ -363,7 +417,7 @@ def test_video(detector: ChangeDetector, video_path: str,
         print(f"    pip install opencv-contrib-python")
         return
 
-    # Video özellikleri[web:191][web:206]
+    # Video özellikleri
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -374,7 +428,7 @@ def test_video(detector: ChangeDetector, video_path: str,
     print(f"  Total frames: {total_frames}")
     print(f"  FPS: {video_fps}")
 
-    # Frame sayısı 0 ise (codec sorunu)[web:194][web:197]
+    # Frame sayısı 0 ise (codec sorunu)
     if total_frames == 0:
         print(f"\n⚠ WARNING: Frame count is 0 - codec issue likely")
         print(f"  Will process until end of stream...")
